@@ -1,0 +1,39 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Big Pencils BP / Большие карандаши BP",
+    "description": "Giant random-coloured pencils spawn in the world / Гигантские карандаши случайного цвета",
+    "uuid": "e737c560-903f-4262-9ebf-b9fd307c4bea",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      20,
+      0
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "2a696785-32f8-4973-aeed-da41a6fce575",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "48d44589-6f9e-429d-80be-77d013d2319f",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

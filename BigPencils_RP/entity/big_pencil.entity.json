@@ -1,0 +1,47 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "pencil:big_pencil",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "white": "textures/entity/big_pencil/white",
+        "orange": "textures/entity/big_pencil/orange",
+        "magenta": "textures/entity/big_pencil/magenta",
+        "light_blue": "textures/entity/big_pencil/light_blue",
+        "yellow": "textures/entity/big_pencil/yellow",
+        "lime": "textures/entity/big_pencil/lime",
+        "pink": "textures/entity/big_pencil/pink",
+        "gray": "textures/entity/big_pencil/gray",
+        "light_gray": "textures/entity/big_pencil/light_gray",
+        "cyan": "textures/entity/big_pencil/cyan",
+        "purple": "textures/entity/big_pencil/purple",
+        "blue": "textures/entity/big_pencil/blue",
+        "brown": "textures/entity/big_pencil/brown",
+        "green": "textures/entity/big_pencil/green",
+        "red": "textures/entity/big_pencil/red",
+        "black": "textures/entity/big_pencil/black"
+      },
+      "geometry": {
+        "default": "geometry.big_pencil"
+      },
+      "animations": {
+        "wobble": "animation.big_pencil.wobble"
+      },
+      "scripts": {
+        "animate": [
+          "wobble"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.big_pencil"
+      ],
+      "spawn_egg": {
+        "base_color": "#FED83D",
+        "overlay_color": "#F48FB1"
+      }
+    }
+  }
+}

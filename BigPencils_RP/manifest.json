@@ -1,0 +1,39 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Big Pencils RP / Большие карандаши RP",
+    "description": "Textures and models / Текстуры и модели",
+    "uuid": "48d44589-6f9e-429d-80be-77d013d2319f",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      20,
+      0
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "2449a3d4-3a4c-4ae8-95a7-fed50388a6cb",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "e737c560-903f-4262-9ebf-b9fd307c4bea",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}
