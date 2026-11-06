@@ -41,7 +41,7 @@ public class RandomHammers {
         bus.addListener(this::onAttributes);
         bus.addListener(this::onSpawnPlacement);
         bus.addListener(this::onCreativeTab);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HammerConfig.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HammerConfig.SPEC, "randomhammers-v2.toml");
     }
 
     private void onAttributes(EntityAttributeCreationEvent e) {

@@ -44,14 +44,14 @@ public class HammerRenderer extends EntityRenderer<HammerEntity> {
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        // ноги на y = 24 (как у ванильных моделей); вверх — отрицательный y
-        root.addOrReplaceChild("handle", CubeListBuilder.create().texOffs(0, 40)
-                .addBox(-4F, -32F, -4F, 8F, 16F, 8F), PartPose.offset(0F, 24F, 0F));
-        // нижний блок ручки — свободный конец (у перевёрнутого молотка это самый верхний блок по центру)
-        root.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(32, 40)
-                .addBox(-4F, -16F, -4F, 8F, 16F, 8F), PartPose.offset(0F, 24F, 0F));
+        // как постройка из блоков Minecraft (1 блок = 16 px), перевёрнутая «Т»:
+        // голова 3x1x1 внизу, ручка 1x1x1 + верхний блок 1x1x1 (другого цвета). Ноги на y = 24.
         root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
-                .addBox(-24F, -48F, -8F, 48F, 16F, 16F), PartPose.offset(0F, 24F, 0F));
+                .addBox(-24F, -16F, -8F, 48F, 16F, 16F), PartPose.offset(0F, 24F, 0F));
+        root.addOrReplaceChild("handle", CubeListBuilder.create().texOffs(0, 40)
+                .addBox(-8F, -32F, -8F, 16F, 16F, 16F), PartPose.offset(0F, 24F, 0F));
+        root.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(64, 40)
+                .addBox(-8F, -48F, -8F, 16F, 16F, 16F), PartPose.offset(0F, 24F, 0F));
         return LayerDefinition.create(mesh, 128, 128);
     }
 

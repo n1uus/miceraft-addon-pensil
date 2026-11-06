@@ -18,10 +18,10 @@ public final class HammerConfig {
         SIZE_Y = b.comment("Масштаб по оси Y (высота)").defineInRange("size_y", 1.0, 0.1, 10.0);
         b.pop();
         b.comment("Вращение (только визуально, в градусах)").push("rotation");
-        ROTATION_X = b.comment("Наклон по оси X, градусы (180 = вверх ногами)").defineInRange("rotation_x", 180.0, -360.0, 360.0);
+        ROTATION_X = b.comment("Наклон по оси X, градусы (0 = модель уже перевёрнутая Т из блоков)").defineInRange("rotation_x", 0.0, -360.0, 360.0);
         ROTATION_Y = b.comment("Поворот по оси Y, градусы").defineInRange("rotation_y", 0.0, -360.0, 360.0);
         SPIN_X = b.comment("Постоянное вращение по оси X, градусов в секунду (0 = нет)").defineInRange("spin_x", 0.0, -3600.0, 3600.0);
-        SPIN_Y = b.comment("Постоянное вращение вокруг себя по высоте (ось Y), градусов в секунду (0 = нет)").defineInRange("spin_y", 90.0, -3600.0, 3600.0);
+        SPIN_Y = b.comment("Постоянное вращение вокруг себя по высоте (ось Y), градусов в секунду (0 = нет)").defineInRange("spin_y", 0.0, -3600.0, 3600.0);
         b.pop();
         b.push("mob");
         SPAWN_CHANCE = b.comment("Шанс, что попытка спавна удастся (0..1). Меньше = реже").defineInRange("spawn_chance", 1.0, 0.0, 1.0);

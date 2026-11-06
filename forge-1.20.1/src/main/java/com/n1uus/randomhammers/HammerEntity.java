@@ -26,6 +26,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.Vec3;
 
 public class HammerEntity extends PathfinderMob {
@@ -135,6 +139,13 @@ public class HammerEntity extends PathfinderMob {
 
     // ----- езда -----
 
+    private int airTicks, groundTicks;
+    private boolean flying;
+
+    private static void say(Entity passenger, String text) {
+        if (passenger instanceof Player p && !p.level().isClientSide) p.displayClientMessage(Component.literal(text), false);
+    }
+
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!isVehicle() && !player.isSecondaryUseActive()) {
@@ -142,6 +153,40 @@ public class HammerEntity extends PathfinderMob {
             return InteractionResult.sidedSuccess(level().isClientSide);
         }
         return super.mobInteract(player, hand);
+    }
+
+    @Override
+    protected void addPassenger(Entity passenger) {
+        super.addPassenger(passenger);
+        say(passenger, "Вы сели на pensil");
+        flying = false; airTicks = 0; groundTicks = 0;
+    }
+
+    @Override
+    protected void removePassenger(Entity passenger) {
+        super.removePassenger(passenger);
+        say(passenger, "Вы слезли с pensil");
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!level().isClientSide && getControllingPassenger() instanceof Player rider) {
+            if (onGround()) { groundTicks++; airTicks = 0; } else { airTicks++; groundTicks = 0; }
+            if (!flying && airTicks >= 8) { flying = true; say(rider, "Вы взлетели на pensil"); }
+            else if (flying && groundTicks >= 3) { flying = false; say(rider, "Вы приземлились на pensil"); }
+        }
+    }
+
+    /** Пока на молотке сидит игрок — гравитации нет, он летит туда, куда смотрит игрок. */
+    @Override
+    public boolean isNoGravity() {
+        return getControllingPassenger() != null || super.isNoGravity();
+    }
+
+    @Override
+    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
+        return false;
     }
 
     @Override
@@ -155,7 +200,7 @@ public class HammerEntity extends PathfinderMob {
     }
 
     @Override
-    protected boolean canAddPassenger(net.minecraft.world.entity.Entity passenger) {
+    protected boolean canAddPassenger(Entity passenger) {
         return getPassengers().isEmpty();
     }
 
@@ -168,12 +213,17 @@ public class HammerEntity extends PathfinderMob {
             setRot(getYRot(), getXRot());
             yBodyRot = getYRot();
             yHeadRot = yBodyRot;
-            float strafe = rider.xxa * 0.5F;
-            float forward = rider.zza;
-            if (forward <= 0.0F) forward *= 0.25F;
             if (isControlledByLocalInstance()) {
-                setSpeed((float) getAttributeValue(Attributes.MOVEMENT_SPEED));
-                super.travel(new Vec3(strafe, travelVector.y, forward));
+                // летим туда, куда смотрит игрок (W — вперёд/вверх/вниз по взгляду, A/D — вбок)
+                double speed = getAttributeValue(Attributes.MOVEMENT_SPEED) * 1.3;
+                float yaw = rider.getYRot() * Mth.DEG_TO_RAD;
+                Vec3 look = rider.getLookAngle();
+                Vec3 left = new Vec3(Mth.cos(yaw), 0.0, Mth.sin(yaw));
+                Vec3 target = look.scale(rider.zza).add(left.scale(rider.xxa * 0.7)).scale(speed);
+                Vec3 motion = getDeltaMovement().scale(0.8).add(target.scale(0.2));
+                setDeltaMovement(motion);
+                move(MoverType.SELF, getDeltaMovement());
+                if (horizontalCollision) setDeltaMovement(getDeltaMovement().multiply(0.5, 1.0, 0.5));
             } else {
                 setDeltaMovement(Vec3.ZERO);
             }

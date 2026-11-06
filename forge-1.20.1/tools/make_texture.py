@@ -27,13 +27,13 @@ for face, r in faces(0, 0, 48, 16, 16).items():  # голова
     x, y, w, h = r
     if face in ("north", "south", "east", "west"):
         fill(img, (x, y, w, 1), int(g * .75)); fill(img, (x, y + h - 1, w, 1), int(g * .75))
-for (u, v) in ((0, 40), (32, 40)):  # ручка: основная часть и конец (красится отдельно)
-  for face, r in faces(u, v, 8, 16, 8).items():
-    g = int(255 * K[face]); fill(img, r, g)
-    x, y, w, h = r
-    if face in ("north", "south", "east", "west") and u == 0:
-        for sy in range(2, h, 6):
-            fill(img, (x, sy + y, w, 1), int(g * .7))
+for (u, v) in ((0, 40), (64, 40)):  # ручка и верхний блок: обычные блоки 16x16x16
+    for face, r in faces(u, v, 16, 16, 16).items():
+        g = int(255 * K[face]); fill(img, r, g)
+        x, y, w, h = r
+        if face in ("north", "south", "east", "west"):
+            fill(img, (x, y, w, 1), int(g * .8)); fill(img, (x, y + h - 1, w, 1), int(g * .8))
+            fill(img, (x, y, 1, h), int(g * .8)); fill(img, (x + w - 1, y, 1, h), int(g * .8))
 x0, y0, w, h = faces(0, 0, 48, 16, 16)["north"]  # лицо
 for ex in (x0 + 12, x0 + 30):
     fill(img, (ex, y0 + 4, 6, 7), 255); fill(img, (ex + 2, y0 + 6, 3, 4), 10)

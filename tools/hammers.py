@@ -26,12 +26,12 @@ OUT = os.path.join(ROOT, "dist", "RandomHammers.mcaddon")
 ID = "hammer:random_hammer"
 
 DEFAULTS = {"size_x": 1.0, "size_y": 1.0, "spawn_weight": 100, "herd_min": 1,
-            "herd_max": 3, "health": 20, "rotation_x": 180, "rotation_y": 0, "spin_x": 0, "spin_y": 90, "color_variants": 32, "color_seed": 1}
+            "herd_max": 3, "health": 20, "rotation_x": 0, "rotation_y": 0, "spin_x": 0, "spin_y": 0, "color_variants": 32, "color_seed": 1}
 
 TEX = 128
 # Голова: 3 блока в ширину (48 px), 1 блок высотой/глубиной. Ручка («палка») по центру: 8x32x8.
-HEAD = {"origin": (-24, 32, -8), "size": (48, 16, 16), "uv": (0, 0)}
-HANDLE = {"origin": (-4, 0, -4), "size": (8, 32, 8), "uv": (0, 40)}
+HEAD = {"origin": (-24, 0, -8), "size": (48, 16, 16), "uv": (0, 0)}
+HANDLE = {"origin": (-8, 16, -8), "size": (16, 32, 16), "uv": (0, 40)}
 BASE_W, BASE_H = 3.0, 3.0  # блоков при size = 1.0
 
 FACE_K = {"top": 1.15, "bottom": 0.6, "east": 0.85, "north": 1.0, "west": 0.75, "south": 0.8}
@@ -96,10 +96,9 @@ def make_texture(head_col, handle_col, tip_col):
         fill(img, rect, shade(handle_col, k))
         x, y, w, h = rect
         if face in ("north", "south", "east", "west"):
-            for sy in range(2, h - 16, 6):  # полоски-обмотка
-                fill(img, (x, y + sy, w, 1), shade(handle_col, k * 0.7))
-            fill(img, (x, y + h - 16, w, 16), shade(tip_col, k))  # нижний блок ручки (у перевёрнутого — самый верхний)
-        elif face == "bottom":
+            fill(img, (x, y, w, 16), shade(tip_col, k))  # верхний блок ручки — другого цвета
+            fill(img, (x, y + 15, w, 1), shade(handle_col, k * 0.8))
+        elif face == "top":
             fill(img, rect, shade(tip_col, k))
     # Лицо на передней грани головы
     x0, y0, w, h = faces(HEAD)["north"]
