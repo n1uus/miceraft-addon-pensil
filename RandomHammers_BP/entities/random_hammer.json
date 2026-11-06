@@ -216,6 +216,22 @@
         "priority": 7
       },
       "minecraft:nameable": {},
+      "minecraft:is_tamed": {},
+      "minecraft:rideable": {
+        "seat_count": 1,
+        "family_types": [
+          "player"
+        ],
+        "interact_text": "Сесть / Ride",
+        "seats": {
+          "position": [
+            0,
+            3.0,
+            0
+          ]
+        }
+      },
+      "minecraft:input_ground_controlled": {},
       "minecraft:loot": {
         "table": "loot_tables/entities/random_hammer.json"
       }

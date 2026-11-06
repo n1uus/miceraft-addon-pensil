@@ -26,7 +26,7 @@ OUT = os.path.join(ROOT, "dist", "RandomHammers.mcaddon")
 ID = "hammer:random_hammer"
 
 DEFAULTS = {"size_x": 1.0, "size_y": 1.0, "spawn_weight": 100, "herd_min": 1,
-            "herd_max": 3, "health": 20, "rotation_x": 0, "rotation_y": 0, "spin_x": 0, "spin_y": 0, "color_variants": 32, "color_seed": 1}
+            "herd_max": 3, "health": 20, "rotation_x": 180, "rotation_y": 0, "spin_x": 0, "spin_y": 90, "color_variants": 32, "color_seed": 1}
 
 TEX = 128
 # Голова: 3 блока в ширину (48 px), 1 блок высотой/глубиной. Ручка («палка») по центру: 8x32x8.
@@ -256,6 +256,14 @@ def main():
                 "minecraft:behavior.look_at_player": {"priority": 6, "look_distance": 8},
                 "minecraft:behavior.random_look_around": {"priority": 7},
                 "minecraft:nameable": {},
+                "minecraft:is_tamed": {},
+                "minecraft:rideable": {
+                    "seat_count": 1,
+                    "family_types": ["player"],
+                    "interact_text": "Сесть / Ride",
+                    "seats": {"position": [0, round(BASE_H * sy, 3), 0]},
+                },
+                "minecraft:input_ground_controlled": {},
                 "minecraft:loot": {"table": "loot_tables/entities/random_hammer.json"},
             },
             "events": {

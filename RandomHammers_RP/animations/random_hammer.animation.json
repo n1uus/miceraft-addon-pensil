@@ -13,8 +13,8 @@
         },
         "spin": {
           "rotation": [
-            "0.0 + query.life_time * 0.0 + math.sin(query.life_time * 200) * 5 * query.modified_move_speed",
-            "0.0 + query.life_time * 0.0",
+            "180.0 + query.life_time * 0.0 + math.sin(query.life_time * 200) * 5 * query.modified_move_speed",
+            "0.0 + query.life_time * 90.0",
             "math.sin(query.life_time * 100) * 7 * query.modified_move_speed"
           ]
         }
