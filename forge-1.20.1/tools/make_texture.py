@@ -27,10 +27,11 @@ for face, r in faces(0, 0, 48, 16, 16).items():  # голова
     x, y, w, h = r
     if face in ("north", "south", "east", "west"):
         fill(img, (x, y, w, 1), int(g * .75)); fill(img, (x, y + h - 1, w, 1), int(g * .75))
-for face, r in faces(0, 40, 8, 32, 8).items():  # ручка
+for (u, v) in ((0, 40), (32, 40)):  # ручка: основная часть и конец (красится отдельно)
+  for face, r in faces(u, v, 8, 16, 8).items():
     g = int(255 * K[face]); fill(img, r, g)
     x, y, w, h = r
-    if face in ("north", "south", "east", "west"):
+    if face in ("north", "south", "east", "west") and u == 0:
         for sy in range(2, h, 6):
             fill(img, (x, sy + y, w, 1), int(g * .7))
 x0, y0, w, h = faces(0, 0, 48, 16, 16)["north"]  # лицо

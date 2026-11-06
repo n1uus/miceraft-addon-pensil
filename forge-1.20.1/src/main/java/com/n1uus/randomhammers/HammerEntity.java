@@ -34,6 +34,9 @@ public class HammerEntity extends PathfinderMob {
     private static final EntityDataAccessor<Integer> HANDLE_COLOR =
             SynchedEntityData.defineId(HammerEntity.class, EntityDataSerializers.INT);
 
+    private static final EntityDataAccessor<Integer> TIP_COLOR =
+            SynchedEntityData.defineId(HammerEntity.class, EntityDataSerializers.INT);
+
     private boolean configured;
 
     public HammerEntity(EntityType<? extends HammerEntity> type, Level level) {
@@ -43,6 +46,7 @@ public class HammerEntity extends PathfinderMob {
             RandomSource r = level.getRandom();
             // случайный цвет головы и ручки
             entityData.set(HEAD_COLOR, Color.HSBtoRGB(r.nextFloat(), 0.55F + r.nextFloat() * 0.45F, 0.65F + r.nextFloat() * 0.35F));
+            entityData.set(TIP_COLOR, Color.HSBtoRGB(r.nextFloat(), 0.6F + r.nextFloat() * 0.4F, 0.8F + r.nextFloat() * 0.2F));
             entityData.set(HANDLE_COLOR, Color.HSBtoRGB(r.nextFloat(), 0.3F + r.nextFloat() * 0.6F, 0.4F + r.nextFloat() * 0.5F));
         }
         refreshDimensions();
@@ -67,16 +71,19 @@ public class HammerEntity extends PathfinderMob {
         super.defineSynchedData();
         entityData.define(HEAD_COLOR, 0xFFE53935);
         entityData.define(HANDLE_COLOR, 0xFF8D6E63);
+        entityData.define(TIP_COLOR, 0xFFFFC107);
     }
 
     public int getHeadColor() { return entityData.get(HEAD_COLOR); }
     public int getHandleColor() { return entityData.get(HANDLE_COLOR); }
+    public int getTipColor() { return entityData.get(TIP_COLOR); }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("HeadColor", getHeadColor());
         tag.putInt("HandleColor", getHandleColor());
+        tag.putInt("TipColor", getTipColor());
         tag.putBoolean("Configured", configured);
     }
 
@@ -85,6 +92,7 @@ public class HammerEntity extends PathfinderMob {
         super.readAdditionalSaveData(tag);
         configured = tag.getBoolean("Configured");
         if (tag.contains("HeadColor")) entityData.set(HEAD_COLOR, tag.getInt("HeadColor"));
+        if (tag.contains("TipColor")) entityData.set(TIP_COLOR, tag.getInt("TipColor"));
         if (tag.contains("HandleColor")) entityData.set(HANDLE_COLOR, tag.getInt("HandleColor"));
     }
 

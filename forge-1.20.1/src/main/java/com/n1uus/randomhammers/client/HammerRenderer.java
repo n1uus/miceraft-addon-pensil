@@ -30,12 +30,14 @@ public class HammerRenderer extends EntityRenderer<HammerEntity> {
 
     private final ModelPart head;
     private final ModelPart handle;
+    private final ModelPart tip;
 
     public HammerRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
         ModelPart root = ctx.bakeLayer(LAYER);
         head = root.getChild("head");
         handle = root.getChild("handle");
+        tip = root.getChild("tip");
         shadowRadius = 1.2F;
     }
 
@@ -44,7 +46,10 @@ public class HammerRenderer extends EntityRenderer<HammerEntity> {
         PartDefinition root = mesh.getRoot();
         // ноги на y = 24 (как у ванильных моделей); вверх — отрицательный y
         root.addOrReplaceChild("handle", CubeListBuilder.create().texOffs(0, 40)
-                .addBox(-4F, -32F, -4F, 8F, 32F, 8F), PartPose.offset(0F, 24F, 0F));
+                .addBox(-4F, -32F, -4F, 8F, 16F, 8F), PartPose.offset(0F, 24F, 0F));
+        // нижний блок ручки — свободный конец (у перевёрнутого молотка это самый верхний блок по центру)
+        root.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(32, 40)
+                .addBox(-4F, -16F, -4F, 8F, 16F, 8F), PartPose.offset(0F, 24F, 0F));
         root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
                 .addBox(-24F, -48F, -8F, 48F, 16F, 16F), PartPose.offset(0F, 24F, 0F));
         return LayerDefinition.create(mesh, 128, 128);
@@ -74,6 +79,7 @@ public class HammerRenderer extends EntityRenderer<HammerEntity> {
         int overlay = LivingEntityRenderer.getOverlayCoords(e, 0.0F);
         draw(head, e.getHeadColor(), ps, vc, light, overlay);
         draw(handle, e.getHandleColor(), ps, vc, light, overlay);
+        draw(tip, e.getTipColor(), ps, vc, light, overlay);
         ps.popPose();
 
         super.render(e, entityYaw, partialTick, ps, buffers, light);

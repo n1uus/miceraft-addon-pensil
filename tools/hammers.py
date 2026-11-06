@@ -79,7 +79,7 @@ def hsv(h, s, v):
     return tuple(int(c * 255) for c in colorsys.hsv_to_rgb(h, s, v))
 
 
-def make_texture(head_col, handle_col):
+def make_texture(head_col, handle_col, tip_col):
     img = Image.new("RGBA", (TEX, TEX), (0, 0, 0, 0))
     for face, rect in faces(HEAD).items():
         k = FACE_K[face]
@@ -96,8 +96,11 @@ def make_texture(head_col, handle_col):
         fill(img, rect, shade(handle_col, k))
         x, y, w, h = rect
         if face in ("north", "south", "east", "west"):
-            for sy in range(2, h, 6):  # полоски-обмотка
+            for sy in range(2, h - 16, 6):  # полоски-обмотка
                 fill(img, (x, y + sy, w, 1), shade(handle_col, k * 0.7))
+            fill(img, (x, y + h - 16, w, 16), shade(tip_col, k))  # нижний блок ручки (у перевёрнутого — самый верхний)
+        elif face == "bottom":
+            fill(img, rect, shade(tip_col, k))
     # Лицо на передней грани головы
     x0, y0, w, h = faces(HEAD)["north"]
     for ex in (x0 + 12, x0 + 30):
@@ -154,10 +157,11 @@ def main():
     for i in range(n):
         head = hsv(rnd.random(), rnd.uniform(0.55, 1.0), rnd.uniform(0.65, 1.0))
         handle = hsv(rnd.random(), rnd.uniform(0.3, 0.9), rnd.uniform(0.4, 0.9))
+        tip = hsv(rnd.random(), rnd.uniform(0.6, 1.0), rnd.uniform(0.8, 1.0))
         palettes.append((head, handle))
         p = os.path.join(RP, "textures", "entity", "random_hammer", f"v{i}.png")
         os.makedirs(os.path.dirname(p), exist_ok=True)
-        make_texture(head, handle).save(p)
+        make_texture(head, handle, tip).save(p)
     os.makedirs(BP, exist_ok=True)
     os.makedirs(RP, exist_ok=True)
     icon = make_icon(*palettes[0])
