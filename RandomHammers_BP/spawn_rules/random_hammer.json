@@ -3,7 +3,7 @@
   "minecraft:spawn_rules": {
     "description": {
       "identifier": "hammer:random_hammer",
-      "population_control": "ambient"
+      "population_control": "monster"
     },
     "conditions": [
       {
@@ -14,11 +14,11 @@
           "adjust_for_weather": false
         },
         "minecraft:weight": {
-          "default": 100
+          "default": 3
         },
         "minecraft:herd": {
           "min_size": 1,
-          "max_size": 3
+          "max_size": 1
         },
         "minecraft:biome_filter": {
           "any_of": [
@@ -26,6 +26,16 @@
               "test": "has_biome_tag",
               "operator": "==",
               "value": "overworld"
+            },
+            {
+              "test": "has_biome_tag",
+              "operator": "==",
+              "value": "nether"
+            },
+            {
+              "test": "has_biome_tag",
+              "operator": "==",
+              "value": "the_end"
             }
           ]
         }

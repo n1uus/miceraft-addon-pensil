@@ -23,6 +23,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.util.RandomSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -99,10 +104,36 @@ public class HammerEntity extends PathfinderMob {
     }
 
     /** Убили молоток игрок — на него обрушивается гроза и летящий тнт. */
+    @Override protected SoundEvent getAmbientSound() { return SoundEvents.WARDEN_AMBIENT; }
+    @Override protected SoundEvent getHurtSound(DamageSource s) { return SoundEvents.WARDEN_HURT; }
+    @Override protected SoundEvent getDeathSound() { return SoundEvents.WARDEN_DEATH; }
+    @Override public int getAmbientSoundInterval() { return 160; }
+    @Override protected float getSoundVolume() { return 2.0F; }
+    @Override public float getVoicePitch() { return 0.6F; }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (level().isClientSide) {
+            if (random.nextInt(3) == 0) {
+                level().addParticle(ParticleTypes.SCULK_SOUL, getRandomX(0.9), getY() + random.nextDouble() * getBbHeight(),
+                        getRandomZ(0.9), 0.0, 0.03, 0.0);
+            }
+        } else if (HammerConfig.FEAR_AURA.get() && tickCount % 40 == 0) {
+            // страх: рядом с pensil темнеет
+            for (Player p : level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(14.0))) {
+                if (!p.isCreative() && !p.isSpectator()) {
+                    p.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 100, 0, false, false, false));
+                }
+            }
+        }
+    }
+
     @Override
     public void die(DamageSource source) {
         super.die(source);
-        if (!level().isClientSide && source.getEntity() instanceof ServerPlayer killer) {
+        if (!level().isClientSide && source.getEntity() instanceof ServerPlayer killer
+                && !getTags().contains(HammerRaid.TAG)) {
             HammerStorm.start(killer);
         }
     }

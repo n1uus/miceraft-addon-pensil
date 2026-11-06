@@ -1,4 +1,5 @@
 {
-  "entity.randomhammers.hammer": "Random Hammer",
-  "item.randomhammers.hammer_spawn_egg": "Random Hammer Spawn Egg"
+  "entity.randomhammers.hammer": "pensil",
+  "item.randomhammers.hammer_spawn_egg": "pensil Spawn Egg",
+  "entity.randomhammers.homing_tnt": "Homing TNT"
 }

@@ -22,11 +22,11 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BP = os.path.join(ROOT, "RandomHammers_BP")
 RP = os.path.join(ROOT, "RandomHammers_RP")
-OUT = os.path.join(ROOT, "dist", "RandomHammers.mcaddon")
+OUT = os.path.join(ROOT, "jar", "RandomHammers.mcaddon")  # рядом с jar для Java
 ID = "hammer:random_hammer"
 
-DEFAULTS = {"size_x": 1.0, "size_y": 1.0, "spawn_weight": 100, "herd_min": 1,
-            "herd_max": 3, "health": 20, "rotation_x": 0, "rotation_y": 0, "spin_x": 0, "spin_y": 0, "color_variants": 32, "color_seed": 1}
+DEFAULTS = {"size_x": 1.0, "size_y": 1.0, "spawn_weight": 3, "herd_min": 1,
+            "herd_max": 1, "health": 20, "rotation_x": 0, "rotation_y": 0, "spin_x": 0, "spin_y": 0, "color_variants": 1, "color_seed": 1}
 
 TEX = 128
 # Голова: 3 блока в ширину (48 px), 1 блок высотой/глубиной. Ручка («палка») по центру: 8x32x8.
@@ -100,12 +100,6 @@ def make_texture(head_col, handle_col, tip_col):
             fill(img, (x, y + 15, w, 1), shade(handle_col, k * 0.8))
         elif face == "top":
             fill(img, rect, shade(tip_col, k))
-    # Лицо на передней грани головы
-    x0, y0, w, h = faces(HEAD)["north"]
-    for ex in (x0 + 12, x0 + 30):
-        fill(img, (ex, y0 + 4, 6, 7), (255, 255, 255))
-        fill(img, (ex + 2, y0 + 6, 3, 4), (20, 20, 20))
-    fill(img, (x0 + 18, y0 + 13, 12, 1), (20, 20, 20))
     return img
 
 
@@ -151,19 +145,18 @@ def main():
     n = cfg["color_variants"]
     rnd = random.Random(cfg["color_seed"])
 
-    # --- случайные раскраски: свой цвет головы и свой цвет ручки у каждого варианта
-    palettes = []
+    # --- цвета: основной чёрный, верхний блок розовый (одна текстура)
+    BLACK, PINK = (38, 38, 38), (255, 105, 180)
+    palettes = [(BLACK, BLACK)] * n
+    tex_dir = os.path.join(RP, "textures", "entity", "random_hammer")
+    os.makedirs(tex_dir, exist_ok=True)
+    for old in os.listdir(tex_dir):
+        os.remove(os.path.join(tex_dir, old))
     for i in range(n):
-        head = hsv(rnd.random(), rnd.uniform(0.55, 1.0), rnd.uniform(0.65, 1.0))
-        handle = hsv(rnd.random(), rnd.uniform(0.3, 0.9), rnd.uniform(0.4, 0.9))
-        tip = hsv(rnd.random(), rnd.uniform(0.6, 1.0), rnd.uniform(0.8, 1.0))
-        palettes.append((head, handle))
-        p = os.path.join(RP, "textures", "entity", "random_hammer", f"v{i}.png")
-        os.makedirs(os.path.dirname(p), exist_ok=True)
-        make_texture(head, handle, tip).save(p)
+        make_texture(BLACK, BLACK, PINK).save(os.path.join(tex_dir, f"v{i}.png"))
     os.makedirs(BP, exist_ok=True)
     os.makedirs(RP, exist_ok=True)
-    icon = make_icon(*palettes[0])
+    icon = make_icon(PINK, BLACK)
     icon.save(os.path.join(RP, "pack_icon.png"))
     icon.save(os.path.join(BP, "pack_icon.png"))
 
@@ -254,7 +247,11 @@ def main():
                 "minecraft:navigation.walk": {"can_path_over_water": False, "avoid_water": True},
                 "minecraft:jump.static": {},
                 "minecraft:behavior.float": {"priority": 0},
-                "minecraft:behavior.panic": {"priority": 1, "speed_multiplier": 1.4},
+                "minecraft:attack": {"damage": 5},
+                "minecraft:follow_range": {"value": 48, "max": 64},
+                "minecraft:knockback_resistance": {"value": 0.6},
+                "minecraft:behavior.hurt_by_target": {"priority": 1, "alert_same_type": True},
+                "minecraft:behavior.melee_attack": {"priority": 2, "speed_multiplier": 1.1, "track_target": True},
                 "minecraft:behavior.random_stroll": {"priority": 5, "speed_multiplier": 0.5},
                 "minecraft:behavior.look_at_player": {"priority": 6, "look_distance": 8},
                 "minecraft:behavior.random_look_around": {"priority": 7},
@@ -266,7 +263,7 @@ def main():
                     "crouching_skip_interact": True,
                     "family_types": ["player"],
                     "interact_text": "Сесть / Ride",
-                    "seats": {"position": [0, round(BASE_H * sy, 3), 0]},
+                    "seats": {"position": [0, round(BASE_H * sy - 0.5, 3), 0]},
                 },
                 "minecraft:input_ground_controlled": {},
                 "minecraft:can_power_jump": {},
@@ -281,25 +278,35 @@ def main():
             },
         },
     })
+    def item(name, w, lo=1, hi=1):
+        e = {"type": "item", "name": name, "weight": w}
+        if hi > 1:
+            e["functions"] = [{"function": "set_count", "count": {"min": lo, "max": hi}}]
+        return e
     write_json(os.path.join(BP, "loot_tables", "entities", "random_hammer.json"), {
         "pools": [
-            {"rolls": 1, "entries": [{"type": "item", "name": "minecraft:iron_ingot",
-                "functions": [{"function": "set_count", "count": {"min": 1, "max": 3}}]}]},
-            {"rolls": 1, "entries": [{"type": "item", "name": "minecraft:stick",
-                "functions": [{"function": "set_count", "count": {"min": 1, "max": 4}}]}]},
+            {"rolls": 1, "entries": [item("minecraft:iron_ingot", 1, 1, 3)]},
+            {"rolls": 1, "entries": [
+                {"type": "empty", "weight": 30},
+                item("minecraft:diamond", 25, 1, 3), item("minecraft:emerald", 20, 1, 4),
+                item("minecraft:gold_ingot", 20, 2, 5), item("minecraft:netherite_scrap", 5),
+                item("minecraft:totem_of_undying", 3), item("minecraft:enchanted_golden_apple", 2),
+                item("minecraft:diamond_block", 1)]},
         ]
     })
     write_json(os.path.join(BP, "spawn_rules", "random_hammer.json"), {
         "format_version": "1.8.0",
         "minecraft:spawn_rules": {
-            "description": {"identifier": ID, "population_control": "ambient"},
+            "description": {"identifier": ID, "population_control": "monster"},
             "conditions": [{
                 "minecraft:spawns_on_surface": {},
                 "minecraft:brightness_filter": {"min": 0, "max": 15, "adjust_for_weather": False},
                 "minecraft:weight": {"default": int(cfg["spawn_weight"])},
                 "minecraft:herd": {"min_size": cfg["herd_min"], "max_size": cfg["herd_max"]},
                 "minecraft:biome_filter": {"any_of": [
-                    {"test": "has_biome_tag", "operator": "==", "value": "overworld"}]},
+                    {"test": "has_biome_tag", "operator": "==", "value": "overworld"},
+                    {"test": "has_biome_tag", "operator": "==", "value": "nether"},
+                    {"test": "has_biome_tag", "operator": "==", "value": "the_end"}]},
             }],
         },
     })
@@ -307,17 +314,22 @@ def main():
     # --- манифесты и язык
     bp_uuid, bp_mod = "c99271e7-22aa-480e-83cf-0c3e3a370a58", "d741cea8-66f6-4cc5-a0df-dcb473d6aeaf"
     rp_uuid, rp_mod = "31682c7e-f7eb-4846-9144-21ea86b6f297", "2900a6c1-6fed-4480-9257-1edbc6526cd6"
-    write_json(os.path.join(BP, "manifest.json"), manifest(
-        "Random Hammers BP / Случайные молотки BP",
-        "Random-coloured T-shaped hammers spawn in the world / Цветные молотки-«Т» случайно появляются в мире",
-        bp_uuid, bp_mod, "data", rp_uuid))
+    bpm = manifest(
+        "pensil BP",
+        "Scary rare pensil hammers: raids, lightning, TNT revenge, events / Страшные редкие pensil: рейды, молнии, тнт, события",
+        bp_uuid, bp_mod, "data", rp_uuid)
+    bpm["header"]["min_engine_version"] = [1, 20, 80]
+    bpm["modules"].append({"type": "script", "language": "javascript", "uuid": "8a1c2f4e-6b7d-4e21-9d3a-5f0b7c9e1a42",
+                           "entry": "scripts/main.js", "version": [1, 0, 0]})
+    bpm["dependencies"].append({"module_name": "@minecraft/server", "version": "1.8.0"})
+    write_json(os.path.join(BP, "manifest.json"), bpm)
     write_json(os.path.join(RP, "manifest.json"), manifest(
-        "Random Hammers RP / Случайные молотки RP",
+        "pensil RP",
         "Textures and models / Текстуры и модели", rp_uuid, rp_mod, "resources", bp_uuid))
     write_text(os.path.join(RP, "texts", "en_US.lang"),
-               f"entity.{ID}.name=Random Hammer\nitem.spawn_egg.entity.{ID}.name=Random Hammer Spawn Egg\n")
+               f"entity.{ID}.name=pensil\nitem.spawn_egg.entity.{ID}.name=pensil Spawn Egg\n")
     write_text(os.path.join(RP, "texts", "ru_RU.lang"),
-               f"entity.{ID}.name=Случайный молоток\nitem.spawn_egg.entity.{ID}.name=Яйцо призыва случайного молотка\n")
+               f"entity.{ID}.name=pensil\nitem.spawn_egg.entity.{ID}.name=Яйцо призыва pensil\n")
     write_json(os.path.join(RP, "texts", "languages.json"), ["en_US", "ru_RU"])
 
     # --- сборка .mcaddon

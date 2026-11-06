@@ -35,14 +35,16 @@ public final class HammerStorm {
             ServerPlayer p = e.getServer().getPlayerList().getPlayer(s.player);
             if (p == null || !p.isAlive()) return true;
             ServerLevel level = p.serverLevel();
-            if (s.ticks <= 50 && s.ticks % 10 == 0) {
+            int bolts = HammerConfig.LIGHTNING_COUNT.get();
+            int tntAt = bolts * 15 + 10;
+            if (s.ticks % 15 == 0 && s.ticks / 15 < bolts) {
                 LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
                 if (bolt != null) {
                     bolt.moveTo(Vec3.atBottomCenterOf(p.blockPosition()));
                     level.addFreshEntity(bolt);
                 }
             }
-            if (s.ticks == 50) {
+            if (s.ticks == tntAt) {
                 int count = HammerConfig.TNT_COUNT.get();
                 double half = HammerConfig.TNT_AREA.get() / 2.0;
                 for (int i = 0; i < count; i++) {
@@ -54,7 +56,7 @@ public final class HammerStorm {
                     level.addFreshEntity(tnt);
                 }
             }
-            return ++s.ticks > 60;
+            return ++s.ticks > tntAt + 5;
         });
     }
 
