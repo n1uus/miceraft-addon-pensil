@@ -7,5 +7,9 @@
   "herd_max": 3,
   "health": 20,
   "color_variants": 32,
-  "color_seed": 1
+  "color_seed": 1,
+  "rotation_x": 0,
+  "rotation_y": 0,
+  "spin_x": 0,
+  "spin_y": 0
 }

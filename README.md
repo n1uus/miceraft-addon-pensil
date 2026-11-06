@@ -33,6 +33,8 @@
 Файл `hammers_config.json`:
 - `size_x` — размер по оси X (ширина/глубина), `size_y` — размер по оси Y (высота); 1.0 = 3×3 блока
 - `spawn_weight`, `herd_min`, `herd_max` — частота спавна и размер групп
+- `rotation_x`, `rotation_y` — угол наклона/поворота в градусах по осям X и Y
+- `spin_x`, `spin_y` — скорость постоянного вращения (градусов в секунду) по осям X и Y, 0 = не крутится
 - `health` — здоровье; `color_variants`, `color_seed` — количество и «зерно» случайных цветов
 
 После правки: `python3 tools/hammers.py` — пересоберёт `dist/RandomHammers.mcaddon` (нужен Pillow).

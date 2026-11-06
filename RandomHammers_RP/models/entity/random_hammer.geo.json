@@ -21,6 +21,15 @@
             0,
             0,
             0
+          ]
+        },
+        {
+          "name": "spin",
+          "parent": "root",
+          "pivot": [
+            0,
+            24,
+            0
           ],
           "cubes": [
             {

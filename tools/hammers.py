@@ -5,6 +5,8 @@
   size_x  — масштаб по оси X (ширина/глубина), 1.0 = исходный размер (голова 3 блока)
   size_y  — масштаб по оси Y (высота), 1.0 = исходный размер (3 блока)
   spawn_weight / herd_min / herd_max — частота спавна и размер групп
+  rotation_x / rotation_y — угол наклона/поворота в градусах по осям X и Y
+  spin_x / spin_y — скорость вращения в градусах/сек по осям X и Y (0 = не крутится)
   health  — здоровье (молотки можно убить)
   color_variants / color_seed — сколько случайных раскрасок и «зерно» генератора
 
@@ -24,7 +26,7 @@ OUT = os.path.join(ROOT, "dist", "RandomHammers.mcaddon")
 ID = "hammer:random_hammer"
 
 DEFAULTS = {"size_x": 1.0, "size_y": 1.0, "spawn_weight": 100, "herd_min": 1,
-            "herd_max": 3, "health": 20, "color_variants": 32, "color_seed": 1}
+            "herd_max": 3, "health": 20, "rotation_x": 0, "rotation_y": 0, "spin_x": 0, "spin_y": 0, "color_variants": 32, "color_seed": 1}
 
 TEX = 128
 # Голова: 3 блока в ширину (48 px), 1 блок высотой/глубиной. Ручка («палка») по центру: 8x32x8.
@@ -39,6 +41,8 @@ def load_config():
     cfg = dict(DEFAULTS)
     with open(os.path.join(ROOT, "hammers_config.json"), encoding="utf-8") as f:
         cfg.update({k: v for k, v in json.load(f).items() if k in DEFAULTS})
+    for k in ("rotation_x", "rotation_y", "spin_x", "spin_y"):
+        cfg[k] = float(cfg[k])
     cfg["size_x"] = max(0.1, float(cfg["size_x"]))
     cfg["size_y"] = max(0.1, float(cfg["size_y"]))
     cfg["color_variants"] = max(1, int(cfg["color_variants"]))
@@ -172,25 +176,30 @@ def main():
                 "visible_bounds_width": 8, "visible_bounds_height": 8,
                 "visible_bounds_offset": [0, 2, 0],
             },
-            "bones": [{"name": "root", "pivot": [0, 0, 0], "cubes": cubes}],
+            "bones": [
+                {"name": "root", "pivot": [0, 0, 0]},
+                {"name": "spin", "parent": "root", "pivot": [0, 24, 0], "cubes": cubes},
+            ],
         }],
     })
 
     # --- анимация: масштаб по осям X/Y из конфига + покачивание при ходьбе
     sx, sy = cfg["size_x"], cfg["size_y"]
+    rx, ry = cfg["rotation_x"], cfg["rotation_y"]
+    spx, spy = cfg["spin_x"], cfg["spin_y"]
     write_json(os.path.join(RP, "animations", "random_hammer.animation.json"), {
         "format_version": "1.8.0",
         "animations": {
             "animation.random_hammer.main": {
                 "loop": True,
-                "bones": {"root": {
-                    "scale": [sx, sy, sx],
-                    "rotation": [
-                        "math.sin(query.life_time * 200) * 5 * query.modified_move_speed",
-                        0,
+                "bones": {
+                    "root": {"scale": [sx, sy, sx]},
+                    "spin": {"rotation": [
+                        f"{rx} + query.life_time * {spx} + math.sin(query.life_time * 200) * 5 * query.modified_move_speed",
+                        f"{ry} + query.life_time * {spy}",
                         "math.sin(query.life_time * 100) * 7 * query.modified_move_speed",
-                    ],
-                }},
+                    ]},
+                },
             }
         },
     })
