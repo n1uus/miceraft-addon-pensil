@@ -34,8 +34,4 @@ for (u, v) in ((0, 40), (64, 40)):  # ручка и верхний блок: о�
         if face in ("north", "south", "east", "west"):
             fill(img, (x, y, w, 1), int(g * .8)); fill(img, (x, y + h - 1, w, 1), int(g * .8))
             fill(img, (x, y, 1, h), int(g * .8)); fill(img, (x + w - 1, y, 1, h), int(g * .8))
-x0, y0, w, h = faces(0, 0, 48, 16, 16)["north"]  # лицо
-for ex in (x0 + 12, x0 + 30):
-    fill(img, (ex, y0 + 4, 6, 7), 255); fill(img, (ex + 2, y0 + 6, 3, 4), 10)
-fill(img, (x0 + 18, y0 + 13, 12, 1), 10)
 img.save(OUT)

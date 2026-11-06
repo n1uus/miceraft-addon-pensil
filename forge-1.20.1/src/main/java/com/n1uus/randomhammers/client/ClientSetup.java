@@ -16,5 +16,7 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void renderers(EntityRenderersEvent.RegisterRenderers e) {
         e.registerEntityRenderer(RandomHammers.HAMMER.get(), HammerRenderer::new);
+        e.<net.minecraft.world.entity.item.PrimedTnt>registerEntityRenderer(RandomHammers.HOMING_TNT.get(),
+                net.minecraft.client.renderer.entity.TntRenderer::new);
     }
 }

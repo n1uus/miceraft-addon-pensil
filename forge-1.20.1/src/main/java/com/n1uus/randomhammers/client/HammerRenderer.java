@@ -28,6 +28,9 @@ public class HammerRenderer extends EntityRenderer<HammerEntity> {
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(RandomHammers.MODID, "textures/entity/hammer.png");
 
+    private static final int MAIN_COLOR = 0x2A2A2A; // основной — чёрный
+    private static final int TIP_COLOR = 0xFF69B4;  // верхний блок — розовый
+
     private final ModelPart head;
     private final ModelPart handle;
     private final ModelPart tip;
@@ -77,9 +80,9 @@ public class HammerRenderer extends EntityRenderer<HammerEntity> {
 
         VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
         int overlay = LivingEntityRenderer.getOverlayCoords(e, 0.0F);
-        draw(head, e.getHeadColor(), ps, vc, light, overlay);
-        draw(handle, e.getHandleColor(), ps, vc, light, overlay);
-        draw(tip, e.getTipColor(), ps, vc, light, overlay);
+        draw(head, MAIN_COLOR, ps, vc, light, overlay);
+        draw(handle, MAIN_COLOR, ps, vc, light, overlay);
+        draw(tip, TIP_COLOR, ps, vc, light, overlay);
         ps.popPose();
 
         super.render(e, entityYaw, partialTick, ps, buffers, light);

@@ -8,7 +8,9 @@ public final class HammerConfig {
     public static final ForgeConfigSpec.DoubleValue SIZE_X, SIZE_Y;
     public static final ForgeConfigSpec.DoubleValue ROTATION_X, ROTATION_Y, SPIN_X, SPIN_Y;
     public static final ForgeConfigSpec.DoubleValue SPAWN_CHANCE;
-    public static final ForgeConfigSpec.IntValue HEALTH;
+    public static final ForgeConfigSpec.IntValue HEALTH, TNT_COUNT;
+    public static final ForgeConfigSpec.DoubleValue TNT_AREA;
+    public static final ForgeConfigSpec.BooleanValue STORM_ENABLED, TNT_BREAK_BLOCKS;
     public static final ForgeConfigSpec.DoubleValue SPEED;
 
     static {
@@ -27,6 +29,12 @@ public final class HammerConfig {
         SPAWN_CHANCE = b.comment("Шанс, что попытка спавна удастся (0..1). Меньше = реже").defineInRange("spawn_chance", 1.0, 0.0, 1.0);
         HEALTH = b.comment("Здоровье (молотков можно убить)").defineInRange("health", 20, 1, 1000);
         SPEED = b.comment("Скорость движения (при езде на нём)").defineInRange("speed", 0.25, 0.05, 1.0);
+        b.pop();
+        b.comment("Что происходит, когда игрок убивает молоток").push("revenge");
+        STORM_ENABLED = b.comment("Включить: молнии в убийцу, затем тнт летит на него").define("enabled", true);
+        TNT_COUNT = b.comment("Сколько тнт появляется").defineInRange("tnt_count", 50, 1, 500);
+        TNT_AREA = b.comment("Сторона квадрата (в блоках), в котором появляется тнт, вокруг игрока (50 = 50x50)").defineInRange("tnt_area", 50.0, 2.0, 200.0);
+        TNT_BREAK_BLOCKS = b.comment("Ломает ли тнт блоки").define("tnt_break_blocks", true);
         b.pop();
         SPEC = b.build();
     }

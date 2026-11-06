@@ -1,10 +1,6 @@
 package com.n1uus.randomhammers;
 
-import java.awt.Color;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -18,7 +14,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
@@ -33,33 +31,21 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.Vec3;
 
 public class HammerEntity extends PathfinderMob {
-    private static final EntityDataAccessor<Integer> HEAD_COLOR =
-            SynchedEntityData.defineId(HammerEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> HANDLE_COLOR =
-            SynchedEntityData.defineId(HammerEntity.class, EntityDataSerializers.INT);
-
-    private static final EntityDataAccessor<Integer> TIP_COLOR =
-            SynchedEntityData.defineId(HammerEntity.class, EntityDataSerializers.INT);
-
     private boolean configured;
 
     public HammerEntity(EntityType<? extends HammerEntity> type, Level level) {
         super(type, level);
         setMaxUpStep(1.1F);
-        if (!level.isClientSide) {
-            RandomSource r = level.getRandom();
-            // случайный цвет головы и ручки
-            entityData.set(HEAD_COLOR, Color.HSBtoRGB(r.nextFloat(), 0.55F + r.nextFloat() * 0.45F, 0.65F + r.nextFloat() * 0.35F));
-            entityData.set(TIP_COLOR, Color.HSBtoRGB(r.nextFloat(), 0.6F + r.nextFloat() * 0.4F, 0.8F + r.nextFloat() * 0.2F));
-            entityData.set(HANDLE_COLOR, Color.HSBtoRGB(r.nextFloat(), 0.3F + r.nextFloat() * 0.6F, 0.4F + r.nextFloat() * 0.5F));
-        }
         refreshDimensions();
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return PathfinderMob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.25);
+                .add(Attributes.MOVEMENT_SPEED, 0.25)
+                .add(Attributes.ATTACK_DAMAGE, 5.0)
+                .add(Attributes.FOLLOW_RANGE, 48.0)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.6);
     }
 
     public static boolean checkSpawn(EntityType<HammerEntity> type, net.minecraft.world.level.ServerLevelAccessor level,
@@ -71,23 +57,8 @@ public class HammerEntity extends PathfinderMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(HEAD_COLOR, 0xFFE53935);
-        entityData.define(HANDLE_COLOR, 0xFF8D6E63);
-        entityData.define(TIP_COLOR, 0xFFFFC107);
-    }
-
-    public int getHeadColor() { return entityData.get(HEAD_COLOR); }
-    public int getHandleColor() { return entityData.get(HANDLE_COLOR); }
-    public int getTipColor() { return entityData.get(TIP_COLOR); }
-
-    @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("HeadColor", getHeadColor());
-        tag.putInt("HandleColor", getHandleColor());
-        tag.putInt("TipColor", getTipColor());
         tag.putBoolean("Configured", configured);
     }
 
@@ -95,9 +66,6 @@ public class HammerEntity extends PathfinderMob {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         configured = tag.getBoolean("Configured");
-        if (tag.contains("HeadColor")) entityData.set(HEAD_COLOR, tag.getInt("HeadColor"));
-        if (tag.contains("TipColor")) entityData.set(TIP_COLOR, tag.getInt("TipColor"));
-        if (tag.contains("HandleColor")) entityData.set(HANDLE_COLOR, tag.getInt("HandleColor"));
     }
 
     @Override
@@ -115,14 +83,28 @@ public class HammerEntity extends PathfinderMob {
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(0, new FloatGoal(this));
-        goalSelector.addGoal(1, new PanicGoal(this, 1.4) {
+        // бьёшь одного — нападают все молотки рядом
+        goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.1, true) {
             @Override public boolean canUse() { return !isVehicle() && super.canUse(); }
+            @Override public boolean canContinueToUse() { return !isVehicle() && super.canContinueToUse(); }
         });
         goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.5) {
             @Override public boolean canUse() { return !isVehicle() && super.canUse(); }
         });
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        targetSelector.addGoal(1, new HurtByTargetGoal(this) {
+            @Override public boolean canUse() { return !isVehicle() && super.canUse(); }
+        }.setAlertOthers());
+    }
+
+    /** Убили молоток игрок — на него обрушивается гроза и летящий тнт. */
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        if (!level().isClientSide && source.getEntity() instanceof ServerPlayer killer) {
+            HammerStorm.start(killer);
+        }
     }
 
     /** Размер хитбокса по осям X и Y из конфига. */
@@ -191,7 +173,7 @@ public class HammerEntity extends PathfinderMob {
 
     @Override
     public double getPassengersRidingOffset() {
-        return getBbHeight() + 0.35;
+        return getBbHeight() - 0.15; // чуть ниже, чем раньше (сидишь ниже)
     }
 
     @Override

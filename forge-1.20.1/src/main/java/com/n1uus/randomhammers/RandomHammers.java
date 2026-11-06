@@ -28,8 +28,12 @@ public class RandomHammers {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static final RegistryObject<EntityType<HammerEntity>> HAMMER = ENTITIES.register("hammer",
-            () -> EntityType.Builder.of(HammerEntity::new, MobCategory.AMBIENT)
+            () -> EntityType.Builder.of(HammerEntity::new, MobCategory.MONSTER)
                     .sized(3.0F, 3.0F).clientTrackingRange(10).build("hammer"));
+
+    public static final RegistryObject<EntityType<HomingTntEntity>> HOMING_TNT = ENTITIES.register("homing_tnt",
+            () -> EntityType.Builder.<HomingTntEntity>of(HomingTntEntity::new, MobCategory.MISC)
+                    .fireImmune().sized(0.98F, 0.98F).clientTrackingRange(10).updateInterval(1).build("homing_tnt"));
 
     public static final RegistryObject<Item> HAMMER_SPAWN_EGG = ITEMS.register("hammer_spawn_egg",
             () -> new ForgeSpawnEggItem(HAMMER, 0xE53935, 0xFDD835, new Item.Properties()));
