@@ -19,3 +19,20 @@
 
 ## Настройка
 Частота спавна — `weight` в `BigPencils_BP/spawn_rules/big_pencil.json`; размер — `collision_box` и модель.
+
+---
+
+# Random Hammers — случайные молотки-«Т»
+
+Молотки в форме буквы **Т**: сверху голова шириной 3 блока, по центру вниз — палка-ручка. Часто спавнятся в Верхнем мире,
+у каждого **свой случайный цвет** головы и ручки (32 раскраски), у них есть глаза. Их **можно убить** (20 HP) — выпадают железо и палки.
+
+Установка: `dist/RandomHammers.mcaddon` → включить Behavior + Resource Pack «Random Hammers». Яйцо спавна или `/summon hammer:random_hammer`.
+
+## Настройки (оси X и Y)
+Файл `hammers_config.json`:
+- `size_x` — размер по оси X (ширина/глубина), `size_y` — размер по оси Y (высота); 1.0 = 3×3 блока
+- `spawn_weight`, `herd_min`, `herd_max` — частота спавна и размер групп
+- `health` — здоровье; `color_variants`, `color_seed` — количество и «зерно» случайных цветов
+
+После правки: `python3 tools/hammers.py` — пересоберёт `dist/RandomHammers.mcaddon` (нужен Pillow).

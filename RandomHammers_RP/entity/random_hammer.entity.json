@@ -1,0 +1,63 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "hammer:random_hammer",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "v0": "textures/entity/random_hammer/v0",
+        "v1": "textures/entity/random_hammer/v1",
+        "v2": "textures/entity/random_hammer/v2",
+        "v3": "textures/entity/random_hammer/v3",
+        "v4": "textures/entity/random_hammer/v4",
+        "v5": "textures/entity/random_hammer/v5",
+        "v6": "textures/entity/random_hammer/v6",
+        "v7": "textures/entity/random_hammer/v7",
+        "v8": "textures/entity/random_hammer/v8",
+        "v9": "textures/entity/random_hammer/v9",
+        "v10": "textures/entity/random_hammer/v10",
+        "v11": "textures/entity/random_hammer/v11",
+        "v12": "textures/entity/random_hammer/v12",
+        "v13": "textures/entity/random_hammer/v13",
+        "v14": "textures/entity/random_hammer/v14",
+        "v15": "textures/entity/random_hammer/v15",
+        "v16": "textures/entity/random_hammer/v16",
+        "v17": "textures/entity/random_hammer/v17",
+        "v18": "textures/entity/random_hammer/v18",
+        "v19": "textures/entity/random_hammer/v19",
+        "v20": "textures/entity/random_hammer/v20",
+        "v21": "textures/entity/random_hammer/v21",
+        "v22": "textures/entity/random_hammer/v22",
+        "v23": "textures/entity/random_hammer/v23",
+        "v24": "textures/entity/random_hammer/v24",
+        "v25": "textures/entity/random_hammer/v25",
+        "v26": "textures/entity/random_hammer/v26",
+        "v27": "textures/entity/random_hammer/v27",
+        "v28": "textures/entity/random_hammer/v28",
+        "v29": "textures/entity/random_hammer/v29",
+        "v30": "textures/entity/random_hammer/v30",
+        "v31": "textures/entity/random_hammer/v31"
+      },
+      "geometry": {
+        "default": "geometry.random_hammer"
+      },
+      "animations": {
+        "main": "animation.random_hammer.main"
+      },
+      "scripts": {
+        "animate": [
+          "main"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.random_hammer"
+      ],
+      "spawn_egg": {
+        "base_color": "#E53935",
+        "overlay_color": "#FDD835"
+      }
+    }
+  }
+}

@@ -1,0 +1,486 @@
+{
+  "format_version": "1.20.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "hammer:random_hammer",
+      "is_spawnable": true,
+      "is_summonable": true
+    },
+    "component_groups": {
+      "hammer:color_0": {
+        "minecraft:variant": {
+          "value": 0
+        }
+      },
+      "hammer:color_1": {
+        "minecraft:variant": {
+          "value": 1
+        }
+      },
+      "hammer:color_2": {
+        "minecraft:variant": {
+          "value": 2
+        }
+      },
+      "hammer:color_3": {
+        "minecraft:variant": {
+          "value": 3
+        }
+      },
+      "hammer:color_4": {
+        "minecraft:variant": {
+          "value": 4
+        }
+      },
+      "hammer:color_5": {
+        "minecraft:variant": {
+          "value": 5
+        }
+      },
+      "hammer:color_6": {
+        "minecraft:variant": {
+          "value": 6
+        }
+      },
+      "hammer:color_7": {
+        "minecraft:variant": {
+          "value": 7
+        }
+      },
+      "hammer:color_8": {
+        "minecraft:variant": {
+          "value": 8
+        }
+      },
+      "hammer:color_9": {
+        "minecraft:variant": {
+          "value": 9
+        }
+      },
+      "hammer:color_10": {
+        "minecraft:variant": {
+          "value": 10
+        }
+      },
+      "hammer:color_11": {
+        "minecraft:variant": {
+          "value": 11
+        }
+      },
+      "hammer:color_12": {
+        "minecraft:variant": {
+          "value": 12
+        }
+      },
+      "hammer:color_13": {
+        "minecraft:variant": {
+          "value": 13
+        }
+      },
+      "hammer:color_14": {
+        "minecraft:variant": {
+          "value": 14
+        }
+      },
+      "hammer:color_15": {
+        "minecraft:variant": {
+          "value": 15
+        }
+      },
+      "hammer:color_16": {
+        "minecraft:variant": {
+          "value": 16
+        }
+      },
+      "hammer:color_17": {
+        "minecraft:variant": {
+          "value": 17
+        }
+      },
+      "hammer:color_18": {
+        "minecraft:variant": {
+          "value": 18
+        }
+      },
+      "hammer:color_19": {
+        "minecraft:variant": {
+          "value": 19
+        }
+      },
+      "hammer:color_20": {
+        "minecraft:variant": {
+          "value": 20
+        }
+      },
+      "hammer:color_21": {
+        "minecraft:variant": {
+          "value": 21
+        }
+      },
+      "hammer:color_22": {
+        "minecraft:variant": {
+          "value": 22
+        }
+      },
+      "hammer:color_23": {
+        "minecraft:variant": {
+          "value": 23
+        }
+      },
+      "hammer:color_24": {
+        "minecraft:variant": {
+          "value": 24
+        }
+      },
+      "hammer:color_25": {
+        "minecraft:variant": {
+          "value": 25
+        }
+      },
+      "hammer:color_26": {
+        "minecraft:variant": {
+          "value": 26
+        }
+      },
+      "hammer:color_27": {
+        "minecraft:variant": {
+          "value": 27
+        }
+      },
+      "hammer:color_28": {
+        "minecraft:variant": {
+          "value": 28
+        }
+      },
+      "hammer:color_29": {
+        "minecraft:variant": {
+          "value": 29
+        }
+      },
+      "hammer:color_30": {
+        "minecraft:variant": {
+          "value": 30
+        }
+      },
+      "hammer:color_31": {
+        "minecraft:variant": {
+          "value": 31
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "hammer",
+          "mob"
+        ]
+      },
+      "minecraft:health": {
+        "value": 20,
+        "max": 20
+      },
+      "minecraft:collision_box": {
+        "width": 3.0,
+        "height": 3.0
+      },
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": true,
+        "is_pushable_by_piston": true
+      },
+      "minecraft:movement": {
+        "value": 0.15
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:navigation.walk": {
+        "can_path_over_water": false,
+        "avoid_water": true
+      },
+      "minecraft:jump.static": {},
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:behavior.panic": {
+        "priority": 1,
+        "speed_multiplier": 1.4
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 5,
+        "speed_multiplier": 0.9
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 6,
+        "look_distance": 8
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 7
+      },
+      "minecraft:nameable": {},
+      "minecraft:loot": {
+        "table": "loot_tables/entities/random_hammer.json"
+      }
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "randomize": [
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_0"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_1"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_2"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_3"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_4"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_5"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_6"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_7"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_8"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_9"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_10"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_11"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_12"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_13"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_14"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_15"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_16"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_17"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_18"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_19"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_20"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_21"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_22"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_23"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_24"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_25"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_26"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_27"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_28"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_29"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_30"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_31"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

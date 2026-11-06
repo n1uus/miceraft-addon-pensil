@@ -1,0 +1,39 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Random Hammers BP / Случайные молотки BP",
+    "description": "Random-coloured T-shaped hammers spawn in the world / Цветные молотки-«Т» случайно появляются в мире",
+    "uuid": "c99271e7-22aa-480e-83cf-0c3e3a370a58",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      20,
+      0
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "d741cea8-66f6-4cc5-a0df-dcb473d6aeaf",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "31682c7e-f7eb-4846-9144-21ea86b6f297",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}
