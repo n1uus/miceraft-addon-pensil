@@ -1,0 +1,258 @@
+package com.n1uus.randomhammers;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.util.RandomSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.phys.Vec3;
+
+public class HammerEntity extends PathfinderMob {
+    private boolean configured;
+
+    public HammerEntity(EntityType<? extends HammerEntity> type, Level level) {
+        super(type, level);
+        setMaxUpStep(1.1F);
+        refreshDimensions();
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return PathfinderMob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.25)
+                .add(Attributes.ATTACK_DAMAGE, 5.0)
+                .add(Attributes.FOLLOW_RANGE, 48.0)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.6);
+    }
+
+    public static boolean checkSpawn(EntityType<HammerEntity> type, net.minecraft.world.level.ServerLevelAccessor level,
+                                     MobSpawnType reason, BlockPos pos, RandomSource random) {
+        if (reason == MobSpawnType.NATURAL || reason == MobSpawnType.CHUNK_GENERATION) {
+            if (random.nextDouble() > HammerConfig.SPAWN_CHANCE.get()) return false;
+        }
+        return level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), type);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("Configured", configured);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        configured = tag.getBoolean("Configured");
+    }
+
+    @Override
+    public void onAddedToWorld() {
+        super.onAddedToWorld();
+        if (!level().isClientSide) {
+            // скорость и здоровье из конфига; новому молотку — полное здоровье
+            getAttribute(Attributes.MAX_HEALTH).setBaseValue(HammerConfig.HEALTH.get());
+            getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(HammerConfig.SPEED.get());
+            if (!configured) { setHealth(getMaxHealth()); configured = true; }
+            else if (getHealth() > getMaxHealth()) setHealth(getMaxHealth());
+        }
+    }
+
+    @Override
+    protected void registerGoals() {
+        goalSelector.addGoal(0, new FloatGoal(this));
+        // бьёшь одного — нападают все молотки рядом
+        goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.1, true) {
+            @Override public boolean canUse() { return !isVehicle() && super.canUse(); }
+            @Override public boolean canContinueToUse() { return !isVehicle() && super.canContinueToUse(); }
+        });
+        goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.5) {
+            @Override public boolean canUse() { return !isVehicle() && super.canUse(); }
+        });
+        goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        targetSelector.addGoal(1, new HurtByTargetGoal(this) {
+            @Override public boolean canUse() { return !isVehicle() && super.canUse(); }
+        }.setAlertOthers());
+    }
+
+    /** Убили молоток игрок — на него обрушивается гроза и летящий тнт. */
+    @Override protected SoundEvent getAmbientSound() { return SoundEvents.WARDEN_AMBIENT; }
+    @Override protected SoundEvent getHurtSound(DamageSource s) { return SoundEvents.WARDEN_HURT; }
+    @Override protected SoundEvent getDeathSound() { return SoundEvents.WARDEN_DEATH; }
+    @Override public int getAmbientSoundInterval() { return 160; }
+    @Override protected float getSoundVolume() { return 2.0F; }
+    @Override public float getVoicePitch() { return 0.6F; }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (level().isClientSide) {
+            if (random.nextInt(3) == 0) {
+                level().addParticle(ParticleTypes.SCULK_SOUL, getRandomX(0.9), getY() + random.nextDouble() * getBbHeight(),
+                        getRandomZ(0.9), 0.0, 0.03, 0.0);
+            }
+        } else if (HammerConfig.FEAR_AURA.get() && tickCount % 40 == 0) {
+            // страх: рядом с pensil темнеет
+            for (Player p : level().getEntitiesOfClass(Player.class, getBoundingBox().inflate(14.0))) {
+                if (!p.isCreative() && !p.isSpectator()) {
+                    p.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 100, 0, false, false, false));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        if (!level().isClientSide && source.getEntity() instanceof ServerPlayer killer
+                && !getTags().contains(HammerRaid.TAG)) {
+            HammerStorm.start(killer);
+        }
+    }
+
+    /** Размер хитбокса по осям X и Y из конфига. */
+    @Override
+    public EntityDimensions getDimensions(Pose pose) {
+        return EntityDimensions.scalable(3.0F * HammerConfig.SIZE_X.get().floatValue(),
+                                         3.0F * HammerConfig.SIZE_Y.get().floatValue());
+    }
+
+    @Override
+    protected float getStandingEyeHeight(Pose pose, EntityDimensions dims) {
+        return dims.height * 0.8F;
+    }
+
+    // ----- езда -----
+
+    private int airTicks, groundTicks;
+    private boolean flying;
+
+    private static void say(Entity passenger, String text) {
+        if (passenger instanceof Player p && !p.level().isClientSide) p.displayClientMessage(Component.literal(text), false);
+    }
+
+    @Override
+    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!isVehicle() && !player.isSecondaryUseActive()) {
+            if (!level().isClientSide) player.startRiding(this);
+            return InteractionResult.sidedSuccess(level().isClientSide);
+        }
+        return super.mobInteract(player, hand);
+    }
+
+    @Override
+    protected void addPassenger(Entity passenger) {
+        super.addPassenger(passenger);
+        say(passenger, "Вы сели на pensil");
+        flying = false; airTicks = 0; groundTicks = 0;
+    }
+
+    @Override
+    protected void removePassenger(Entity passenger) {
+        super.removePassenger(passenger);
+        say(passenger, "Вы слезли с pensil");
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!level().isClientSide && getControllingPassenger() instanceof Player rider) {
+            if (onGround()) { groundTicks++; airTicks = 0; } else { airTicks++; groundTicks = 0; }
+            if (!flying && airTicks >= 8) { flying = true; say(rider, "Вы взлетели на pensil"); }
+            else if (flying && groundTicks >= 3) { flying = false; say(rider, "Вы приземлились на pensil"); }
+        }
+    }
+
+    /** Пока на молотке сидит игрок — гравитации нет, он летит туда, куда смотрит игрок. */
+    @Override
+    public boolean isNoGravity() {
+        return getControllingPassenger() != null || super.isNoGravity();
+    }
+
+    @Override
+    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
+        return false;
+    }
+
+    @Override
+    public double getPassengersRidingOffset() {
+        return getBbHeight() - 0.15; // чуть ниже, чем раньше (сидишь ниже)
+    }
+
+    @Override
+    public LivingEntity getControllingPassenger() {
+        return getFirstPassenger() instanceof Player p ? p : null;
+    }
+
+    @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        return getPassengers().isEmpty();
+    }
+
+    @Override
+    public void travel(Vec3 travelVector) {
+        if (isAlive() && isVehicle() && getControllingPassenger() instanceof Player rider) {
+            setYRot(rider.getYRot());
+            yRotO = getYRot();
+            setXRot(rider.getXRot() * 0.5F);
+            setRot(getYRot(), getXRot());
+            yBodyRot = getYRot();
+            yHeadRot = yBodyRot;
+            if (isControlledByLocalInstance()) {
+                // летим туда, куда смотрит игрок (W — вперёд/вверх/вниз по взгляду, A/D — вбок)
+                double speed = getAttributeValue(Attributes.MOVEMENT_SPEED) * 1.3;
+                float yaw = rider.getYRot() * Mth.DEG_TO_RAD;
+                Vec3 look = rider.getLookAngle();
+                Vec3 left = new Vec3(Mth.cos(yaw), 0.0, Mth.sin(yaw));
+                Vec3 target = look.scale(rider.zza).add(left.scale(rider.xxa * 0.7)).scale(speed);
+                Vec3 motion = getDeltaMovement().scale(0.8).add(target.scale(0.2));
+                setDeltaMovement(motion);
+                move(MoverType.SELF, getDeltaMovement());
+                if (horizontalCollision) setDeltaMovement(getDeltaMovement().multiply(0.5, 1.0, 0.5));
+            } else {
+                setDeltaMovement(Vec3.ZERO);
+            }
+            calculateEntityAnimation(false);
+            return;
+        }
+        super.travel(travelVector);
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distance) {
+        return !isVehicle() && super.removeWhenFarAway(distance);
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        return super.hurt(source, amount);
+    }
+}

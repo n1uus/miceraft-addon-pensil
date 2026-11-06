@@ -1,0 +1,120 @@
+{
+  "format_version": "1.20.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "hammer:random_hammer",
+      "is_spawnable": true,
+      "is_summonable": true
+    },
+    "component_groups": {
+      "hammer:color_0": {
+        "minecraft:variant": {
+          "value": 0
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "hammer",
+          "mob"
+        ]
+      },
+      "minecraft:health": {
+        "value": 20,
+        "max": 20
+      },
+      "minecraft:collision_box": {
+        "width": 3.0,
+        "height": 3.0
+      },
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": true,
+        "is_pushable_by_piston": true
+      },
+      "minecraft:movement": {
+        "value": 0.25
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:navigation.walk": {
+        "can_path_over_water": false,
+        "avoid_water": true
+      },
+      "minecraft:jump.static": {},
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:attack": {
+        "damage": 5
+      },
+      "minecraft:follow_range": {
+        "value": 48,
+        "max": 64
+      },
+      "minecraft:knockback_resistance": {
+        "value": 0.6
+      },
+      "minecraft:behavior.hurt_by_target": {
+        "priority": 1,
+        "alert_same_type": true
+      },
+      "minecraft:behavior.melee_attack": {
+        "priority": 2,
+        "speed_multiplier": 1.1,
+        "track_target": true
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 5,
+        "speed_multiplier": 0.5
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 6,
+        "look_distance": 8
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 7
+      },
+      "minecraft:nameable": {},
+      "minecraft:is_tamed": {},
+      "minecraft:rideable": {
+        "seat_count": 1,
+        "controlling_seat": 0,
+        "crouching_skip_interact": true,
+        "family_types": [
+          "player"
+        ],
+        "interact_text": "Сесть / Ride",
+        "seats": {
+          "position": [
+            0,
+            2.5,
+            0
+          ]
+        }
+      },
+      "minecraft:input_ground_controlled": {},
+      "minecraft:can_power_jump": {},
+      "minecraft:horse.jump_strength": {
+        "value": 1.0
+      },
+      "minecraft:loot": {
+        "table": "loot_tables/entities/random_hammer.json"
+      }
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "randomize": [
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "hammer:color_0"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

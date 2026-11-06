@@ -1,0 +1,32 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "hammer:random_hammer",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "v0": "textures/entity/random_hammer/v0"
+      },
+      "geometry": {
+        "default": "geometry.random_hammer"
+      },
+      "animations": {
+        "main": "animation.random_hammer.main"
+      },
+      "scripts": {
+        "animate": [
+          "main"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.random_hammer"
+      ],
+      "spawn_egg": {
+        "base_color": "#E53935",
+        "overlay_color": "#FDD835"
+      }
+    }
+  }
+}

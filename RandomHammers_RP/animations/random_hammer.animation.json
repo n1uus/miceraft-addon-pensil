@@ -1,0 +1,24 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.random_hammer.main": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "spin": {
+          "rotation": [
+            "0.0 + query.life_time * 0.0 + math.sin(query.life_time * 200) * 5 * query.modified_move_speed",
+            "0.0 + query.life_time * 0.0",
+            "math.sin(query.life_time * 100) * 7 * query.modified_move_speed"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "pensil RP",
+    "description": "Textures and models / Текстуры и модели",
+    "uuid": "31682c7e-f7eb-4846-9144-21ea86b6f297",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      20,
+      0
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "2900a6c1-6fed-4480-9257-1edbc6526cd6",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "c99271e7-22aa-480e-83cf-0c3e3a370a58",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

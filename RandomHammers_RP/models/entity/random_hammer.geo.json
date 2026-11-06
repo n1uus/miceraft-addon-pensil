@@ -1,0 +1,72 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.random_hammer",
+        "texture_width": 128,
+        "texture_height": 128,
+        "visible_bounds_width": 8,
+        "visible_bounds_height": 8,
+        "visible_bounds_offset": [
+          0,
+          2,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "spin",
+          "parent": "root",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -8,
+                16,
+                -8
+              ],
+              "size": [
+                16,
+                32,
+                16
+              ],
+              "uv": [
+                0,
+                40
+              ]
+            },
+            {
+              "origin": [
+                -24,
+                0,
+                -8
+              ],
+              "size": [
+                48,
+                16,
+                16
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "_comment": "Настройки аддона Random Hammers. После изменения запустите: python3 tools/hammers.py (он пересоберёт dist/RandomHammers.mcaddon).",
+  "size_x": 1.0,
+  "size_y": 1.0,
+  "spawn_weight": 3,
+  "herd_min": 1,
+  "herd_max": 1,
+  "health": 20,
+  "color_variants": 1,
+  "color_seed": 1,
+  "rotation_x": 0,
+  "rotation_y": 0,
+  "spin_x": 0,
+  "spin_y": 0
+}
