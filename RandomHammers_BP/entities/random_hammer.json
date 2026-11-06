@@ -189,7 +189,7 @@
         "is_pushable_by_piston": true
       },
       "minecraft:movement": {
-        "value": 0.15
+        "value": 0.25
       },
       "minecraft:movement.basic": {},
       "minecraft:navigation.walk": {
@@ -206,7 +206,7 @@
       },
       "minecraft:behavior.random_stroll": {
         "priority": 5,
-        "speed_multiplier": 0.9
+        "speed_multiplier": 0.5
       },
       "minecraft:behavior.look_at_player": {
         "priority": 6,
@@ -219,6 +219,8 @@
       "minecraft:is_tamed": {},
       "minecraft:rideable": {
         "seat_count": 1,
+        "controlling_seat": 0,
+        "crouching_skip_interact": true,
         "family_types": [
           "player"
         ],
@@ -232,6 +234,10 @@
         }
       },
       "minecraft:input_ground_controlled": {},
+      "minecraft:can_power_jump": {},
+      "minecraft:horse.jump_strength": {
+        "value": 1.0
+      },
       "minecraft:loot": {
         "table": "loot_tables/entities/random_hammer.json"
       }
